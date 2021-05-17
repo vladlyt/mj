@@ -11,7 +11,7 @@
     mj rename daily weekly
     mj aliases
     mj get weekly
-    mj alias ca91bd29-874e-46fa-be75-4f6f4cdc8a5f party
+    mj alias ca91bd29-874e-46fa-be75-4f6f4cdc8a5e party
     mj aliases
     mj connect party
     mj remove party
