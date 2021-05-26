@@ -10,8 +10,6 @@ from .custom_logger import logger
 from .services import RoomService, AliasService
 
 
-# TODO add descriptions?
-
 class Executor:
 
     def __init__(self, commands=None):

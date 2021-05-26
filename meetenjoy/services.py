@@ -14,7 +14,6 @@ from .utils import is_valid_uuid
 
 class RoomService:
     DEFAULT_HOST = 'https://meetenjoy.herokuapp.com'
-    # DEFAULT_HOST = 'http://localhost:5000'
 
     def __init__(self, alias_service: 'AliasService', host=None):
         self.host = self.DEFAULT_HOST if host is None else host
