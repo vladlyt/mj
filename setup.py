@@ -12,6 +12,7 @@ setup(
    author='Vlad Lytvynenko',
    author_email='sir.sagramor@gmail.com',
    url="https://meetenjoy.herokuapp.com",
+   download_url="https://github.com/vladlytvynenko/mj/archive/refs/tags/1.0.tar.gz",
    packages=['meetenjoy'],
    install_requires=['requests'],
    scripts=[
