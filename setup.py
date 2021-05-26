@@ -4,7 +4,7 @@ with open("README.md", 'r') as f:
     long_description = f.read()
 
 setup(
-   name='mj',
+   name='meetenjoy',
    version='1.0',
    description='Tool for conferences',
    license="MIT",
