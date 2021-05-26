@@ -14,7 +14,7 @@ setup(
     url="https://meetenjoy.herokuapp.com",
     download_url="https://github.com/vladlytvynenko/mj/archive/refs/tags/1.0.2.tar.gz",
     packages=['meetenjoy'],
-    install_requires=['requests'],
+    install_requires=['requests', 'appdirs'],
     scripts=[
         'scripts/mj',
     ]
