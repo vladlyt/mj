@@ -3,7 +3,7 @@ from pathlib import Path
 
 from appdirs import user_config_dir
 
-from custom_logger import logger
+from .custom_logger import logger
 
 CONFIG_FOLDER = Path(user_config_dir('meetenjoy'))
 CONFIG_PATH = CONFIG_FOLDER / 'config.json'

@@ -1,0 +1,6 @@
+#!/usr/bin/python3
+
+from meetenjoy.executor import Executor
+
+if __name__ == '__main__':
+    Executor().execute_from_command_line()

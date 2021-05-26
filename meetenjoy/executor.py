@@ -4,10 +4,10 @@ import sys
 from pprint import PrettyPrinter
 from typing import List
 
-from browser import Browser
-from config import CONFIG_PATH
-from custom_logger import logger
-from services import RoomService, AliasService
+from .browser import Browser
+from .config import CONFIG_PATH
+from .custom_logger import logger
+from .services import RoomService, AliasService
 
 
 # TODO add descriptions?
@@ -26,6 +26,7 @@ class Executor:
             'get-config': self.get_config,
             'set-config': self.set_config,
             'set-name': self.set_default_name,
+            'export': self.export_data,
         }
         self.alias_service = AliasService(CONFIG_PATH)
         self.room_service = RoomService(self.alias_service)
@@ -102,7 +103,7 @@ class Executor:
 
     def set_config(self, args):
         parser = argparse.ArgumentParser()
-        parser.add_argument('path', type=str, help='Name what will be set default for rooms')
+        parser.add_argument('path', type=str, help='Path to new config')
 
         args = parser.parse_args(args)
 
@@ -135,6 +136,17 @@ class Executor:
         args = parser.parse_args(args)
         self.alias_service.rename(args.old_alias, args.new_alias)
         logger.info("Room alias %s is renamed to %s", args.old_alias, args.new_alias)
+
+    def export_data(self, args):
+        parser = argparse.ArgumentParser()
+        parser.add_argument('room', type=str, help='UUID/Alias of the room')
+        parser.add_argument('-p', '--path', type=str, help='Path to output file')
+
+        args = parser.parse_args(args)
+
+        data = self.room_service.get_export(args.room, args.path)
+
+        logger.info("Exported data for the room %s: \n%s", args.room, data)
 
     def execute_from_command_line(self):
         parser = argparse.ArgumentParser()

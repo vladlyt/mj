@@ -1,15 +1,20 @@
+import csv
+import datetime
 import json
 import uuid
 from typing import Optional, Dict
+from urllib.parse import quote
 from urllib.parse import urljoin
 
-from custom_logger import logger
-from utils import is_valid_uuid
-from urllib.parse import quote
+import requests
+
+from .custom_logger import logger
+from .utils import is_valid_uuid
 
 
 class RoomService:
     DEFAULT_HOST = 'https://meetenjoy.herokuapp.com'
+    # DEFAULT_HOST = 'http://localhost:5000'
 
     def __init__(self, alias_service: 'AliasService', host=None):
         self.host = self.DEFAULT_HOST if host is None else host
@@ -42,6 +47,50 @@ class RoomService:
 
     def get_room(self, room_name: str, name=None):
         return self._build_url(room_name, name)
+
+    def get_export(self, room: str, path: str = None):
+        if not is_valid_uuid(room):
+            room_uuid = self.alias_service.get_room_id(room)
+            if room_uuid is None:
+                room_uuid = room
+            room = room_uuid
+        response = requests.get(urljoin(self.DEFAULT_HOST, f'export/{room}'))
+        # TODO export to file
+        if not response.ok:
+            return None
+
+        data = response.json()
+        output_data = []
+        for socket_id, info in data.items():
+            connected = datetime.datetime.fromtimestamp(info['connectedTime'] / 1000)
+            disconnected = info['disconnectedTime']
+            nickname = info['nickname']
+            if disconnected is not None:
+                disconnected = datetime.datetime.fromtimestamp(disconnected / 1000)
+                was_in_call = disconnected - connected
+            else:
+                was_in_call = datetime.datetime.now() - connected
+            if was_in_call.seconds <= 10:
+                continue
+
+            h, m, s = str(was_in_call).split(':')
+            was_in_call = f'{h} hours, {m} minutes, {int(float(s))} seconds'
+
+            output_data.append({
+                'nickname': nickname,
+                'connected': connected.strftime('%d/%m/%Y, %H:%M:%S'),
+                'disconnected': disconnected.strftime('%d/%m/%Y, %H:%M:%S') if disconnected is not None else None,
+                'was_in_call': was_in_call,
+            })
+        if path:
+            logger.info("Exporting data to the file: %s", path)
+            with open(path, 'w') as f:
+                writer = csv.writer(f)
+                columns = ['nickname', 'connected', 'disconnected', 'was_in_call']
+                writer.writerow(columns)
+                for row in output_data:
+                    writer.writerow([row[col] for col in columns])
+        return output_data
 
     def get_room_name(self, room_name: str):
         if self.host in room_name:
